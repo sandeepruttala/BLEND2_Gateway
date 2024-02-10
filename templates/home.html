@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <title>Home</title>
+</head>
+<body>
+{#    file input#}
+    <h1>{{ user.email }}</h1>
+    <form action="{% url 'upload' %}" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <!-- Folder input -->
+        <input type="file" id="file" name="file" webkitdirectory directory multiple>
+        <input type="text" id="folder_name" name="folder_name" hidden>
+        <button type="submit" name="submit">Upload</button>
+    </form>
+    <script>
+    document.getElementById('file').addEventListener('change', function(event) {
+        if (this.files.length > 0) {
+            const folderPath = this.files[0].webkitRelativePath;
+            const folderName = folderPath.substring(0, folderPath.indexOf('/'));
+            {#console.log(folderName);#}
+            document.getElementById('folder_name').value = folderName;
+        }
+    });
+</script>
+</body>
+</html>

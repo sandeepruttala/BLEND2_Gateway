@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BLEnD: Register</title>
+</head>
+<body>
+    <div class="container">
+        <h1>BLEnD</h1>
+        <form action="{% url 'register' %}" method="post">
+            {% csrf_token %}
+            <input type="email" name="email" placeholder="Email Address">
+            <input type="text" name="name" placeholder="Your Name">
+            <input type="password" name="password" placeholder="Password">
+            <input type="submit" value="Register to BLEnD">
+        </form>
+    </div>
+</body>
+</html>
