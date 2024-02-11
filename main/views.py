@@ -5,6 +5,7 @@ from django.contrib.auth import authenticate, login, logout
 import os
 import datetime
 import json
+import hashlib
 # Create your views here.
 def login_(request):
     if request.method == 'POST':
@@ -36,11 +37,10 @@ def home(request):
 
 def upload(request):
     if request.method == 'POST':
+        # get file from the request
         files = request.FILES.getlist('file')
-        folder_name = request.POST.get('folder_name')
-        # print(folder_name)
-        # print(files)
-        # create a folder with the folder_name
+        file_name = files[0].name
+        folder_name = hashlib.md5(file_name.encode()).hexdigest()
         os.mkdir(f"media/{folder_name}")
         for file in files:
             with open(f"media/{folder_name}/{file.name}", 'wb+') as destination:
@@ -57,11 +57,9 @@ def extract_metadata(folder_name,request):
     folder_size = get_folder_size(f"media/{folder_name}")
     metadata = {
         "user_id": user.email,
-        "folder_name": folder_name,
         "size": folder_size,
         "creation_date": datetime.datetime.fromtimestamp(folder_info.st_ctime).strftime('%Y-%m-%d %H:%M:%S'),
     }
-    # create a json file with the metadata and save it in the folder
     with open(f"media/{folder_name}/{folder_name}_metadata.json", 'a') as f:
         json.dump(metadata, f, indent=4)
 
@@ -70,6 +68,6 @@ def get_folder_size(folder_path):
     for root, dirs, files in os.walk(folder_path):
         for file in files:
             file_path = os.path.join(root, file)
-            if not os.path.islink(file_path):  # Skip symbolic links
+            if not os.path.islink(file_path):
                 total_size += os.path.getsize(file_path)
     return total_size
