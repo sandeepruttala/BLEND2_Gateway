@@ -41,26 +41,28 @@ def upload(request):
         files = request.FILES.getlist('file')
         file_name = files[0].name
         folder_name = hashlib.md5(file_name.encode()).hexdigest()
-        os.mkdir(f"media/{folder_name}")
+        media_path = f"media/{folder_name}"
+        os.makedirs(media_path, exist_ok=True)
         for file in files:
             with open(f"media/{folder_name}/{file.name}", 'wb+') as destination:
                 for chunk in file.chunks():
                     destination.write(chunk)
         # extract metadata
-        extract_metadata(folder_name,request)
+        extract_metadata(file_name,folder_name,request)
     return redirect('home')
 
-def extract_metadata(folder_name,request):
+def extract_metadata(file_name,folder_name,request):
     folder_info = os.stat(f"media/{folder_name}")
-    print(folder_info)
+    # print(folder_info)
     user = request.user
     folder_size = get_folder_size(f"media/{folder_name}")
     metadata = {
+        'file_name': file_name,
         "user_id": user.email,
         "size": folder_size,
         "creation_date": datetime.datetime.fromtimestamp(folder_info.st_ctime).strftime('%Y-%m-%d %H:%M:%S'),
     }
-    with open(f"media/{folder_name}/{folder_name}_metadata.json", 'a') as f:
+    with open(f"media/{folder_name}/metadata.json", 'a') as f:
         json.dump(metadata, f, indent=4)
 
 def get_folder_size(folder_path):
