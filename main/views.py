@@ -7,6 +7,9 @@ import datetime
 import json
 import hashlib
 # Create your views here.
+def redirect_to_login(request):
+    return redirect('login')
+
 def login_(request):
     if request.method == 'POST':
         email = request.POST.get('email')
