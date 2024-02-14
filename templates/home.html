@@ -11,8 +11,10 @@
     <form action="{% url 'upload' %}" method="post" enctype="multipart/form-data">
         {% csrf_token %}
         <!-- Folder input -->
-        <input type="file" id="file" name="file" miultiple>
+        <input type="file" id="file" name="file">
         <button type="submit" name="submit">Upload</button>
     </form>
+    <br>
+    <a href="{% url 'logout' %}"><button>Logout</button></a>
 </body>
 </html>
